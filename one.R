@@ -1,24 +1,36 @@
 main <- function()
 {
-  grades <- c(7, 8, 5, 4)
-  add <- c()
+  #grades <- c(7, 8, 5, 4)
+  add <- c() #Vetor que recebe as notas das provas que poderão ser refeitas
+  grades <-c() #Vetor que recebe as notas da prova
+  
+  totalExames <- readline(prompt="Quantas provas são?")
+  
+  for(i in 1:totalExames){
+    ex <- readline(prompt="Digite a nota da prova :")
+    grades <- c(grades, ex)
+  }
+  
   
   for(i in 1:length(grades)) 
   {
     if((grades[i]) < 6){
       print(paste("A nota ",i," -> ",grades[i], " pode ser refeita"))
-      #print(readinteger())
+      
       n <- readline(prompt="Deseja refazer? y/n ")
       if(n == "y"){
         print("simmmm")
         add <- c(add, grades[i])
       }
+      
       else if(n == "n"){
         print("tudo bem, n faz")
       } 
+      
       else{
         print("Não vai fazer mais nada pra deixar de ser bobo!")
       }
+      
     }
   }
   print("As provas que podem ser refeitas, são as com as seguintes notas:")
@@ -28,23 +40,30 @@ main <- function()
   
   all <- mean(grades)
   print(paste("A media do aluno é", all))
+  
   resp <- readline(prompt="Deseja ver o gráfico? y/n ")
   if(resp == 'y')
   {
-    print(graph(grades))
+    print(graph(grades, totalExames))
   }
  
 }
 
-graph <- function(grades){
+graph <- function(grades, totalExames){
   library(ggplot2)
   library(dplyr)
   
-  exames <- c(1 ,2 , 3, 4)
-  exames.cate <- rep(c("pequeno", "grande"), each=1)
+  exames <- c() #Vetor que vai receber o total de provas
+  averageCR <- c()
+  for(i in 1:totalExames){
+    exames <- c(exames, i)
+    averageCR <- c(averageCR, i+1)
+  }
+  
+  #exames.cate <- rep(c("pequeno", "grande"), each=1)
   
   #Média da sala de aula
-  averageCR <- c(5, 4, 4, 8)
+  
   
   #CRIAÇÃO DO GRÁFICO
   #plot(exames,grades) # o mesmo que o anterior
