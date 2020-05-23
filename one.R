@@ -35,10 +35,10 @@ main <- function()
   }
   print("As provas que podem ser refeitas, são as com as seguintes notas:")
   print(add)
-  all_remake <- mean(add)
+  all_remake <- mean(as.numeric(add))
   print(paste("A media das provas que serão refeitas é", all_remake))
   
-  all <- mean(grades)
+  all <- mean(as.numeric(grades))
   print(paste("A media do aluno é", all))
   
   resp <- readline(prompt="Deseja ver o gráfico? y/n ")
@@ -46,6 +46,7 @@ main <- function()
   {
     print(graph(grades, totalExames))
   }
+  
  
 }
 
@@ -67,7 +68,7 @@ graph <- function(grades, totalExames){
   
   #CRIAÇÃO DO GRÁFICO
   #plot(exames,grades) # o mesmo que o anterior
-  plot(exames, grades, lwd  = 2, main="Notas no exame", ylab="Notas", xlab="Provas", type="l",  col="purple", xlim=c(1, 4), ylim=c(1, 10))
+  plot(exames, grades, lwd  = 2, main="Notas no exame", ylab="Notas", xlab="Provas", type="l",  col="purple", xlim=c(1, as.numeric(totalExames)), ylim=c(1, 10))
   #Criando um grafico que ira sobrepor com o outro
   lines(exames, averageCR, lwd  = 2, col="green", type="l", lty  = "dashed")
   legend("topright",
