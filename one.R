@@ -51,8 +51,36 @@ main <- function()
 }
 
 graph <- function(grades, totalExames){
-  library(ggplot2)
-  library(dplyr)
+  # install.packages("RPostgreSQL")
+  require("RPostgreSQL")
+  
+  # create a connection
+  # save the password that we can "hide" it as best as we can by collapsing it
+  pw <- {
+    "senha"
+  }
+  
+  # loads the PostgreSQL driver
+  drv <- dbDriver("PostgreSQL")
+  # creates a connection to the postgres database
+  # note that "con" will be used later in each connection to the database
+  con <- dbConnect(drv, dbname = "postgres",
+                   host = "localhost", port = 5432,
+                   user = "postgres", password = pw)
+  rm(pw) # removes the password
+  
+  # check for the cartable
+  dbExistsTable(con, "grades")
+  # TRUE
+  
+  
+  # query the data from postgreSQL 
+  df_postgres <- dbGetQuery(con, "SELECT * from grades")
+  print(df_postgres)
+  
+  # close the connection
+  #dbDisconnect(con)
+  #dbUnloadDriver(drv)
   
   exames <- c() #Vetor que vai receber o total de provas
   averageCR <- c()
@@ -75,6 +103,8 @@ graph <- function(grades, totalExames){
          c("Média do aluno","Média da sala"),
          fill=c("purple","green")
   )
+ 
+  
   # cex  = 1 -> Controla o tamanho da bolinha
   #lwd -> controla o width da linha
   #Type:
@@ -87,5 +117,6 @@ graph <- function(grades, totalExames){
     #"h" - histogram-like vertical lines
     #"n" - does not produce any points or lines
 }
+
 
 print(main())
