@@ -1,13 +1,12 @@
 main <- function()
 {
-  #grades <- c(7, 8, 5, 4)
   add <- c() #Vetor que recebe as notas das provas que poderão ser refeitas
   grades <-c() #Vetor que recebe as notas da prova
   
   totalExames <- readline(prompt="Quantas provas são?")
   
   for(i in 1:totalExames){
-    ex <- readline(prompt="Digite a nota da prova :")
+    ex <- readline(prompt=paste("Digite a nota da prova ",i,":"))
     grades <- c(grades, ex)
   }
   
@@ -28,7 +27,7 @@ main <- function()
       } 
       
       else{
-        print("Não vai fazer mais nada pra deixar de ser bobo!")
+        print("Não vai fazer mais nada pra deixar de ser troxa!")
       }
       
     }
@@ -53,52 +52,48 @@ main <- function()
 graph <- function(grades, totalExames){
   # install.packages("RPostgreSQL")
   require("RPostgreSQL")
+  library("DBI");
+  library("RPostgreSQL");
   
-  # create a connection
-  # save the password that we can "hide" it as best as we can by collapsing it
   pw <- {
-    "senha"
+    "06121998"
   }
   
   # loads the PostgreSQL driver
   drv <- dbDriver("PostgreSQL")
-  # creates a connection to the postgres database
-  # note that "con" will be used later in each connection to the database
+  
   con <- dbConnect(drv, dbname = "postgres",
                    host = "localhost", port = 5432,
                    user = "postgres", password = pw)
   rm(pw) # removes the password
+  df_postgres <- dbGetQuery(con, "select test, avg(grade) as media from grades group by test ORDER BY test ASC")
+  rs <- as.data.frame(df_postgres);
+  tot <- nrow(rs)
   
-  # check for the cartable
-  dbExistsTable(con, "grades")
-  # TRUE
+  mediaGeral = c()
   
-  
-  # query the data from postgreSQL 
-  df_postgres <- dbGetQuery(con, "SELECT * from grades")
-  print(df_postgres)
-  
-  # close the connection
-  #dbDisconnect(con)
-  #dbUnloadDriver(drv)
-  
-  exames <- c() #Vetor que vai receber o total de provas
-  averageCR <- c()
-  for(i in 1:totalExames){
-    exames <- c(exames, i)
-    averageCR <- c(averageCR, i+1)
+  for(i in 1:tot){
+    for(j in 1:totalExames){
+      if(rs$test[i] == j){
+        mediaGeral <- c(mediaGeral, rs$media[i])
+      }
+    }
   }
   
-  #exames.cate <- rep(c("pequeno", "grande"), each=1)
+  # close the connection
+  #dbClearResult(rs)
+  dbDisconnect(con)
   
-  #Média da sala de aula
-  
+  exames <- c() #Vetor que vai receber o total de provas
+  for(i in 1:totalExames){
+    exames <- c(exames, i)
+  }
   
   #CRIAÇÃO DO GRÁFICO
   #plot(exames,grades) # o mesmo que o anterior
   plot(exames, grades, lwd  = 2, main="Notas no exame", ylab="Notas", xlab="Provas", type="l",  col="purple", xlim=c(1, as.numeric(totalExames)), ylim=c(1, 10))
   #Criando um grafico que ira sobrepor com o outro
-  lines(exames, averageCR, lwd  = 2, col="green", type="l", lty  = "dashed")
+    lines(exames, mediaGeral, lwd  = 2, col="green", type="l", lty  = "dashed")
   legend("topright",
          c("Média do aluno","Média da sala"),
          fill=c("purple","green")
@@ -117,6 +112,5 @@ graph <- function(grades, totalExames){
     #"h" - histogram-like vertical lines
     #"n" - does not produce any points or lines
 }
-
 
 print(main())
