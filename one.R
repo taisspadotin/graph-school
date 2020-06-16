@@ -56,7 +56,7 @@ graph <- function(grades, totalExames){
   library("RPostgreSQL");
   
   pw <- {
-    "06121998"
+    "password"
   }
   
   # loads the PostgreSQL driver
